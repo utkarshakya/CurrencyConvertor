@@ -5,28 +5,25 @@ function useCurrencyMetaData() {
 
     const { setAllCurrencyDetails } = useCurrency()
 
-    function prepareData(data) {
-        if (Object.keys(data).length === 0) return
 
-        const currencyCodes = Object.keys(data)
-        currencyCodes.forEach((value) => {
-            (async () => {
-                try {
-                    await fetch(`https://currency-rate-exchange-api.onrender.com/${value}`).then((res) => res.json()).then((data) => {
-                        const obj = {
-                            currencyCode: data.currencyCode,
-                            currencyName: data.currencyName,
-                            currencySymbol: data.currencySymbol,
-                            countryName: data.countryName,
-                        }
-                        setAllCurrencyDetails((prev) => [...prev, obj])
-                    })
-                } catch (error) {
-                    console.log("Error In PrepareData Function", error)
-                }
-            })()
-        })
-
+    async function prepareData(data) {
+        const currencyCodes = Object.keys(data);
+        try {
+            const promises = currencyCodes.map(async (code) => {
+                const response = await fetch(`https://currency-rate-exchange-api.onrender.com/${code}`);
+                const data = await response.json();
+                return {
+                    currencyCode: data.currencyCode,
+                    currencyName: data.currencyName,
+                    currencySymbol: data.currencySymbol,
+                    countryName: data.countryName,
+                };
+            });
+            const results = await Promise.all(promises);
+            setAllCurrencyDetails(results.filter(item => item.currencyCode)); // Filter out invalid responses
+        } catch (error) {
+            console.log("Error in prepareData:", error);
+        }
     }
 
     useEffect(() => {
