@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import { Input, Select } from "./components";
 import useCurrencyInfo from "./hooks/useCurrencyInfo";
 import useCurrencyMetaData from "./hooks/useCurrencyMetaData";
@@ -34,13 +34,13 @@ export default function App() {
     if (from2To) {
       const userInput = Number(e.target.value);
       setFromAmount(userInput);
-      const valueOfOneUnit = Number(currentCurrencyRates[convertCurrencyTo]);
-      setToAmount(userInput * valueOfOneUnit);
+      const valueOfOneUnit = (currentCurrencyRates[getCurrencyCodeFromString(convertCurrencyTo)]);
+      setToAmount((userInput * valueOfOneUnit).toFixed(2));
     } else {
       const userInput = Number(e.target.value);
       setToAmount(userInput);
-      const valueOfOneUnit = Number(currentCurrencyRates[convertCurrencyTo]);
-      setFromAmount(userInput * (1 / valueOfOneUnit));
+      const valueOfOneUnit = (currentCurrencyRates[getCurrencyCodeFromString(convertCurrencyTo)]);
+      setFromAmount((userInput * (1 / valueOfOneUnit)).toFixed(2));
     }
   }
 

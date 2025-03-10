@@ -183,6 +183,9 @@
   .flex {
     display: flex;
   }
+  .h-14 {
+    height: calc(var(--spacing) * 14);
+  }
   .h-screen {
     height: 100vh;
   }
@@ -218,10 +221,6 @@
   }
   .rounded {
     border-radius: 0.25rem;
-  }
-  .border-b {
-    border-bottom-style: var(--tw-border-style);
-    border-bottom-width: 1px;
   }
   .bg-gray-800 {
     background-color: var(--color-gray-800);
@@ -289,11 +288,6 @@
       line-height: var(--tw-leading, var(--text-base--line-height));
     }
   }
-}
-@property --tw-border-style {
-  syntax: "*";
-  inherits: false;
-  initial-value: solid;
 }
 @property --tw-font-weight {
   syntax: "*";
