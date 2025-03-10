@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Input, Select } from "./components";
 import useCurrencyInfo from "./hooks/useCurrencyInfo";
 import useCurrencyMetaData from "./hooks/useCurrencyMetaData";
 import { useCurrency } from "./Context/CurrencyContext";
+import Spinner from "./components/Spinner";
 
 function getCurrencyCodeFromString(value) {
   return value.slice(0, 3);
@@ -20,6 +21,8 @@ export default function App() {
     setFromAmount,
     toAmount,
     setToAmount,
+    isMetadataLoading,
+    isRatesLoading,
   } = useCurrency();
 
   useCurrencyMetaData();
@@ -44,6 +47,14 @@ export default function App() {
       setToAmount(userInput);
       setFromAmount((userInput * (1 / valueOfOneUnit)).toFixed(2));
     }
+  }
+
+  if (isMetadataLoading || isRatesLoading) {
+    return (
+      <div className="w-full h-screen flex justify-center items-center">
+        <Spinner />
+      </div>
+    );
   }
 
   return (

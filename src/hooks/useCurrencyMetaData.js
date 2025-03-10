@@ -2,43 +2,36 @@ import { useEffect } from 'react'
 import { useCurrency } from '../Context/CurrencyContext'
 
 function useCurrencyMetaData() {
+  const { setAllCurrencyDetails, setIsMetadataLoading } = useCurrency()
 
-    const { setAllCurrencyDetails } = useCurrency()
-
-
-    async function prepareData(data) {
-        const currencyCodes = Object.keys(data);
-        try {
-            const promises = currencyCodes.map(async (code) => {
-                const response = await fetch(`https://currency-rate-exchange-api.onrender.com/${code}`);
-                const data = await response.json();
-                return {
-                    currencyCode: data.currencyCode,
-                    currencyName: data.currencyName,
-                    currencySymbol: data.currencySymbol,
-                    countryName: data.countryName,
-                };
-            });
-            const results = await Promise.all(promises);
-            setAllCurrencyDetails(results.filter(item => item.currencyCode)); // Filter out invalid responses
-        } catch (error) {
-            console.log("Error in prepareData:", error);
-        }
+  async function prepareData(data) {
+    const currencyCodes = Object.keys(data)
+    try {
+      const promises = currencyCodes.map(async (code) => {
+        const res = await fetch(`https://currency-rate-exchange-api.onrender.com/${code}`)
+        return await res.json()
+      })
+      const results = await Promise.all(promises)
+      const filtered = results.filter(item => item.currencyCode)
+      setAllCurrencyDetails(filtered)
+    } catch (error) {
+      console.log("Error:", error)
     }
+  }
 
-    useEffect(() => {
-        (async () => {
-            try {
-                await fetch(`https://api.frankfurter.dev/v1/currencies`)
-                    .then((res) => (res.json()))
-                    .then((data) => {
-                        prepareData(data)
-                    })
-            } catch (error) {
-                console.log("Sorry", error)
-            }
-        })()
-    }, [])
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(`https://api.frankfurter.dev/v1/currencies`)
+        const data = await res.json()
+        await prepareData(data)
+      } catch (error) {
+        console.log("Error:", error)
+      } finally {
+        setIsMetadataLoading(false)
+      }
+    })()
+  }, [])
 }
 
 export default useCurrencyMetaData
