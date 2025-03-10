@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Input, Select } from "./components";
 import useCurrencyInfo from "./hooks/useCurrencyInfo";
 import useCurrencyMetaData from "./hooks/useCurrencyMetaData";
 import { useCurrency } from "./Context/CurrencyContext";
 
-function getCurrencyCodeFromString(value){
-  return value.slice(0,3)
+function getCurrencyCodeFromString(value) {
+  return value.slice(0, 3);
 }
 
 export default function App() {
@@ -23,7 +23,7 @@ export default function App() {
   } = useCurrency();
 
   useCurrencyMetaData();
-  useCurrencyInfo(getCurrencyCodeFromString(convertCurrencyFrom))
+  useCurrencyInfo(getCurrencyCodeFromString(convertCurrencyFrom));
 
   function convert(e, from2To = true) {
     if (!e.target.value) {
@@ -34,12 +34,14 @@ export default function App() {
     if (from2To) {
       const userInput = Number(e.target.value);
       setFromAmount(userInput);
-      const valueOfOneUnit = (currentCurrencyRates[getCurrencyCodeFromString(convertCurrencyTo)]);
+      const valueOfOneUnit =
+        currentCurrencyRates[getCurrencyCodeFromString(convertCurrencyTo)];
       setToAmount((userInput * valueOfOneUnit).toFixed(2));
     } else {
       const userInput = Number(e.target.value);
       setToAmount(userInput);
-      const valueOfOneUnit = (currentCurrencyRates[getCurrencyCodeFromString(convertCurrencyTo)]);
+      const valueOfOneUnit =
+        currentCurrencyRates[getCurrencyCodeFromString(convertCurrencyTo)];
       setFromAmount((userInput * (1 / valueOfOneUnit)).toFixed(2));
     }
   }

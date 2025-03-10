@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "tailwind": "npx @tailwindcss/cli -i ./src/style/input.css -o ./src/style/output.css --watch",
-    "serve": "npx vite",
+    "serve": "npx vite --host",
     "dev": "npm-run-all --parallel tailwind serve",
     "ngrok": "ngrok http --url=parakeet-relative-properly.ngrok-free.app 5173"
   },

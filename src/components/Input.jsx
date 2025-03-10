@@ -7,7 +7,7 @@ function Input({ amount, onAmountChange, placeholder, from2To = true }) {
       placeholder={placeholder}
       value={amount ?? ""}
       onChange={(e) => {onAmountChange(e, from2To)}}
-      className="h-14 w-full px-3 py-2 bg-gray-800 rounded"
+      className="h-14 w-full px-3 py-2 bg-gray-800 rounded outline-none"
     />
   );
 }
