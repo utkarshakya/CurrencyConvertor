@@ -31,17 +31,17 @@ export default function App() {
       setToAmount(null);
       return;
     }
+
+    const targetCurrencyCode = getCurrencyCodeFromString(convertCurrencyTo);
+    const valueOfOneUnit = currentCurrencyRates[targetCurrencyCode] || 1; // Fallback to 1
+
     if (from2To) {
       const userInput = Number(e.target.value);
       setFromAmount(userInput);
-      const valueOfOneUnit =
-        currentCurrencyRates[getCurrencyCodeFromString(convertCurrencyTo)];
       setToAmount((userInput * valueOfOneUnit).toFixed(2));
     } else {
       const userInput = Number(e.target.value);
       setToAmount(userInput);
-      const valueOfOneUnit =
-        currentCurrencyRates[getCurrencyCodeFromString(convertCurrencyTo)];
       setFromAmount((userInput * (1 / valueOfOneUnit)).toFixed(2));
     }
   }
