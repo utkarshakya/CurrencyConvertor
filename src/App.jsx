@@ -1,40 +1,46 @@
-import React, { useEffect, useState } from "react";
-import useCurrencyInfo from "./hooks/useCurrencyInfo";
+import React, { useCallback, useEffect, useState } from "react";
 import { Input, Select } from "./components";
+import useCurrencyInfo from "./hooks/useCurrencyInfo";
+import useCurrencyMetaData from "./hooks/useCurrencyMetaData";
+import { useCurrency } from "./Context/CurrencyContext";
 
+function getCurrencyCodeFromString(value){
+  return value.slice(0,3)
+}
 
 export default function App() {
+  const {
+    allCurrencyDetails,
+    currentCurrencyRates,
+    convertCurrencyFrom,
+    setConvertCurrencyFrom,
+    convertCurrencyTo,
+    setConvertCurrencyTo,
+    fromAmount,
+    setFromAmount,
+    toAmount,
+    setToAmount,
+  } = useCurrency();
 
-  const [currencies, setCurrencies] = useState([]);
-  const [fromCurrency, setFromCurrency] = useState("usd");
-  const [toCurrency, setToCurrency] = useState("inr");
-  const [amount, setAmount] = useState(null);
-  const [convertedAmount, setConvertedAmount] = useState(null);
-  const { data, loading } = useCurrencyInfo(fromCurrency);
-  
-  useEffect(() => {
-    if (!loading && Object.keys(data).length != 0) {
-      const currencyRates = data["rates"][fromCurrency]
-      setCurrencies(Object.keys(currencyRates));
-    }
-  }, [loading, data]);
+  useCurrencyMetaData();
+  useCurrencyInfo(getCurrencyCodeFromString(convertCurrencyFrom))
 
   function convert(e, from2To = true) {
     if (!e.target.value) {
-      setAmount(null);
-      setConvertedAmount(null);
+      setFromAmount(null);
+      setToAmount(null);
       return;
     }
     if (from2To) {
       const userInput = Number(e.target.value);
-      setAmount(userInput);
-      const valueOfOneUnit = data[toCurrency];
-      setConvertedAmount(userInput * valueOfOneUnit);
+      setFromAmount(userInput);
+      const valueOfOneUnit = Number(currentCurrencyRates[convertCurrencyTo]);
+      setToAmount(userInput * valueOfOneUnit);
     } else {
       const userInput = Number(e.target.value);
-      setConvertedAmount(userInput);
-      const valueOfOneUnit = data[toCurrency];
-      setAmount(userInput * (1 / valueOfOneUnit));
+      setToAmount(userInput);
+      const valueOfOneUnit = Number(currentCurrencyRates[convertCurrencyTo]);
+      setFromAmount(userInput * (1 / valueOfOneUnit));
     }
   }
 
@@ -51,24 +57,26 @@ export default function App() {
           <div className="w-full flex flex-wrap gap-3">
             <div className="w-full flex flex-col items-center px-3">
               <Select
-                currency={fromCurrency}
-                onCurrencyChange={setFromCurrency}
-                currencyArray={currencies}
+                currency={convertCurrencyFrom}
+                onCurrencyChange={setConvertCurrencyFrom}
+                currencyArray={allCurrencyDetails}
               />
+              <hr />
               <Input
-                amount={amount}
+                amount={fromAmount}
                 onAmountChange={convert}
                 placeholder="From"
               />
             </div>
             <div className="w-full flex flex-col items-center px-3">
               <Select
-                currency={toCurrency}
-                onCurrencyChange={setToCurrency}
-                currencyArray={currencies}
+                currency={convertCurrencyTo}
+                onCurrencyChange={setConvertCurrencyTo}
+                currencyArray={allCurrencyDetails}
               />
+              <hr />
               <Input
-                amount={convertedAmount}
+                amount={toAmount}
                 onAmountChange={convert}
                 placeholder="To"
                 from2To={false}
