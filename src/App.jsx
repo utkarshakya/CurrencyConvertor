@@ -1,9 +1,7 @@
 import React from "react";
-import { Input, Select } from "./components";
-import useCurrencyInfo from "./hooks/useCurrencyInfo";
-import useCurrencyMetaData from "./hooks/useCurrencyMetaData";
+import { Button, Input, Select, Spinner } from "./components";
+import {useCurrencyInfo, useCurrencyMetaData} from './hooks'
 import { useCurrency } from "./Context/CurrencyContext";
-import Spinner from "./components/Spinner";
 
 function getCurrencyCodeFromString(value) {
   return value.slice(0, 3);
@@ -22,7 +20,6 @@ export default function App() {
     toAmount,
     setToAmount,
     isMetadataLoading,
-    isRatesLoading,
   } = useCurrency();
 
   useCurrencyMetaData();
@@ -49,7 +46,16 @@ export default function App() {
     }
   }
 
-  if (isMetadataLoading || isRatesLoading) {
+  function handleSwap(){
+    const temp = convertCurrencyFrom;
+    const tem = fromAmount;
+    setConvertCurrencyFrom(convertCurrencyTo)
+    setConvertCurrencyTo(temp)
+    setFromAmount(toAmount)
+    setToAmount(tem)
+  }
+
+  if (isMetadataLoading) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
         <Spinner />
@@ -72,6 +78,7 @@ export default function App() {
               <Select
                 currency={convertCurrencyFrom}
                 onCurrencyChange={setConvertCurrencyFrom}
+                alsoChangeAmount={convert}
                 currencyArray={allCurrencyDetails}
               />
               <hr />
@@ -85,7 +92,9 @@ export default function App() {
               <Select
                 currency={convertCurrencyTo}
                 onCurrencyChange={setConvertCurrencyTo}
+                alsoChangeAmount={convert}
                 currencyArray={allCurrencyDetails}
+                from2To={false}
               />
               <hr />
               <Input
@@ -95,6 +104,9 @@ export default function App() {
                 from2To={false}
               />
             </div>
+          </div>
+          <div>
+            <Button onClick={handleSwap} buttonName={"Swap"}/>
           </div>
         </form>
       </div>
